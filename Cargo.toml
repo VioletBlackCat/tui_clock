@@ -1,0 +1,9 @@
+[package]
+name = "tui_clock"
+version = "1.0.0"
+edition = "2024"
+
+[dependencies]
+ratatui = "0.28"      # 终端 UI 框架
+crossterm = "0.28"    # 终端操控库
+chrono = "0.4"        # 时间处理库

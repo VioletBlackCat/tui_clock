@@ -1,0 +1,9 @@
+# Rust 编译产物（几百 MB，绝对不要提交）
+/target
+
+# 编辑器
+.vscode/
+
+# Windows 杂项
+Thumbs.db
+Desktop.ini
