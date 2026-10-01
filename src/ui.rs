@@ -86,7 +86,7 @@ fn render_text(text: &str, colon_on: bool) -> Vec<String> {
 fn draw_clock(term_w: u16, term_h: u16, settings: &Settings) -> io::Result<()> {
     let now = Local::now();
     let now_str = now.format(settings.time_pattern()).to_string();
-    let colon_on = now.second() % 2 == 0;
+    let colon_on = now.second().is_multiple_of(2);
 
     let rows = render_text(&now_str, colon_on);
     let content_w = rows[0].chars().count();

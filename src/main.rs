@@ -47,12 +47,11 @@ fn main() -> io::Result<()> {
             _ => Duration::from_secs(3600),
         };
 
-        if event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
-                    app.handle_key(key);
-                }
-            }
+        if event::poll(timeout)?
+            && let Event::Key(key) = event::read()?
+            && key.kind == KeyEventKind::Press
+        {
+            app.handle_key(key);
         }
 
         if app.should_quit {
