@@ -78,7 +78,13 @@ impl App {
                 KeyCode::Down => {
                     *selected = (*selected + 1) % SETTINGS_ITEMS.len();
                 }
-                KeyCode::Left | KeyCode::Right => match *selected {
+                KeyCode::Left => match *selected {
+                    0 => self.settings.hour_format = self.settings.hour_format.toggled(),
+                    1 => self.settings.show_seconds = !self.settings.show_seconds,
+                    2 => self.settings.theme = self.settings.theme.prev(),
+                    _ => {}
+                },
+                KeyCode::Right => match *selected {
                     0 => self.settings.hour_format = self.settings.hour_format.toggled(),
                     1 => self.settings.show_seconds = !self.settings.show_seconds,
                     2 => self.settings.theme = self.settings.theme.next(),

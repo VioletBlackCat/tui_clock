@@ -7,11 +7,12 @@ pub enum Theme {
     Classic,
     Sunset,
     Ocean,
+    Violet
 }
 //显示在设置中的文字
 impl Theme {
      //全部主题,顺序与settings 里的主题顺序相同
-     pub const ALL: [Theme; 3] = [Theme::Classic, Theme::Sunset, Theme::Ocean];
+     pub const ALL: [Theme; 4] = [Theme::Classic, Theme::Sunset, Theme::Ocean, Theme::Violet];
     // 从配置里的名字还原主题（大小写不敏感）
      pub fn from_name(s: &str) -> Option<Self> {
         Self::ALL.iter().copied().find(|t| t.label().eq_ignore_ascii_case(s))
@@ -22,7 +23,8 @@ impl Theme {
         match self {
             Theme::Classic => "Classic",
             Theme::Ocean => "Ocean",
-            Theme::Sunset => "Sunset"
+            Theme::Sunset => "Sunset",
+            Theme::Violet => "Violet"
         }
      }
 
@@ -31,7 +33,17 @@ impl Theme {
         match self {
             Theme::Classic => Theme::Sunset,
             Theme::Sunset => Theme::Ocean,
-            Theme::Ocean => Theme::Classic,
+            Theme::Ocean => Theme::Violet,
+            Theme::Violet => Theme::Classic
+        }
+    }
+    //切到上一套主题，循环
+    pub fn prev(self) -> Self {
+        match self {
+            Theme::Classic => Theme::Violet,
+            Theme::Sunset => Theme::Classic,
+            Theme::Ocean => Theme::Sunset,
+            Theme::Violet => Theme::Ocean
         }
     }
     // 取 t ∈ [0,1] 处的颜色：0 = 顶，1 = 底
@@ -42,9 +54,10 @@ impl Theme {
     // 色标：(顶色, 底色)
     fn stops(self) -> ((u8, u8, u8), (u8, u8, u8)) {
         match self {
-            Theme::Classic => ((240, 240, 240), (240, 240, 240)), // 纯色，无渐变
-            Theme::Sunset  => ((255, 120, 60), (170, 50, 180)),   // 橙 → 紫
-            Theme::Ocean   => ((0, 220, 200), (40, 90, 255)),     // 青 → 蓝
+            Theme::Classic => ((240, 240, 240), (240, 240, 240)), // 纯白
+            Theme::Sunset  => ((255, 120, 60), (170, 50, 180)),   // 橙红
+            Theme::Ocean   => ((0, 220, 200), (40, 90, 255)),     //蓝
+            Theme::Violet  => ((234, 175, 200), (101, 77, 164)),  //紫
         }
     }
 }
