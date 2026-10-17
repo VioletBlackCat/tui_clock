@@ -1,7 +1,8 @@
 //设置
 use crate::theme::Theme;
 
-//设置中的选项要先在app.rs中做出来，不能绑在设置的ui里面，否则一退出菜单就失效了
+//设置项与状态逻辑必须放在数据模型层（settings.rs），不能放进 ui/settings.rs
+//否则绘制模块就成了状态的唯一持有者：一退出该页面，改动就失效了
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 //时间格式设置
 pub enum HourFormat { H24, H12 }

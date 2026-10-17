@@ -51,12 +51,17 @@ theme        = "Classic"  # Classic | Sunset | Ocean
 
 | File | Responsibility |
 | --- | --- |
-|main.rs  | 生命周期：终端初始化、事件循环、配置读写 
-|app.rs   | 状态机：`Screen` 与 `Settings` 
-|ui.rs    | 绘制：只管排版，不含业务知识 
-|theme.rs | 配色与渐变插值 
-|font.rs  | 字形数据 
-|config.rs| 配置文件的路径 / 解析 / 序列化 
+|main.rs        | 生命周期：终端初始化、事件循环、配置读写 |
+|app.rs         | 状态机：`Screen` 与按键分发 |
+|settings.rs    | 设置数据模型：`Settings` 与 `HourFormat` |
+|ui/mod.rs      | 绘制入口 `draw()` 与共享排版助手（居中、清屏、整帧发送） |
+|ui/clock.rs    | 时钟页绘制 |
+|ui/menu.rs     | 菜单页绘制 |
+|ui/settings.rs | 设置页绘制 |
+|ui/about.rs    | About 页绘制 |
+|theme.rs       | 配色与渐变插值 |
+|font.rs        | 字形数据 |
+|config.rs      | 配置文件的路径 / 解析 / 序列化 |
 
 ## Update record
 
