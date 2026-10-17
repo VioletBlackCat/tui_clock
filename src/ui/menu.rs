@@ -6,7 +6,7 @@ use crossterm::queue;
 use crossterm::style::{Print, ResetColor};
 use crossterm::terminal::{Clear, ClearType};
 
-use crate::app::MENU_ITEMS;
+
 
 use super::draw_message;
 use super::NOT_ENOUGH_ROOM;
@@ -16,9 +16,9 @@ const ITEM_W: usize = 10;
 const LINE_W: usize = 2 + ITEM_W;
 
 /// 菜单页：整体居中，选中项前面带 '>'
-pub(super) fn draw_menu(term_w: u16, term_h: u16, selected: usize) -> io::Result<()> {
+pub(super) fn draw_menu(term_w: u16, term_h: u16, items: &[&str], selected: usize) -> io::Result<()> {
 
-    let n = MENU_ITEMS.len();
+    let n = items.len();
     let block_h = 2 * n - 1;
     let start_y = (term_h as usize).saturating_sub(block_h) / 2;
     //空间不足时渲染提示语（draw_message 内部自己会清屏，这里不能再提前清，
@@ -33,7 +33,7 @@ pub(super) fn draw_menu(term_w: u16, term_h: u16, selected: usize) -> io::Result
     //x移出循环，只算一次，且基于常量 LINE_W
     let x = (term_w as usize).saturating_sub(LINE_W) / 2;
 
-    for (i, item) in MENU_ITEMS.iter().enumerate() {
+    for (i, item) in items.iter().enumerate() {
         let marker = if i == selected { '>' } else { ' ' };
 
         //^ 改成 <（左对齐），右侧自动补空格补满 8 列

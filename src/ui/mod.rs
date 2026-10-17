@@ -2,6 +2,8 @@ pub mod about;
 pub mod clock;
 pub mod menu;
 pub mod settings;
+pub mod tools;
+
 
 use std::io::{self, stdout, Write};
 
@@ -11,7 +13,7 @@ use crossterm::queue;
 use crossterm::style::{Print, ResetColor};
 use crossterm::terminal::{Clear, ClearType};
 
-use crate::app::{App, Screen};
+use crate::app::{App, Screen, FUNC_MENU, MAIN_MENU};
 use crate::font;
 
 
@@ -26,11 +28,20 @@ const NOT_ENOUGH_ROOM: &str =
 pub fn draw(app: &App, term_w: u16, term_h: u16) -> io::Result<()> {
     match app.screen {
         Screen::Clock => clock::draw_clock(term_w, term_h, &app.settings),
-        Screen::Menu { selected } => menu::draw_menu(term_w, term_h, selected),
-        Screen::Settings { selected } => settings::draw_settings(term_w, term_h, selected, &app.settings),
-        Screen::About => about::draw_about(term_w, term_h) 
+        Screen::Menu { selected } => {
+            menu::draw_menu(term_w, term_h, &MAIN_MENU, selected)
+        }
+        Screen::Functions { selected } => {
+            menu::draw_menu(term_w, term_h, &FUNC_MENU, selected)
+        }
+        Screen::Settings { selected } => {
+            settings::draw_settings(term_w, term_h, selected, &app.settings)
+        }
+        Screen::About => about::draw_about(term_w, term_h),
+        Screen::Stopwatch => tools::draw_stopwatch(term_w, term_h, &app.stopwatch, &app.settings),
     }
 }
+
 
 // 将文本渲染为字符画
 fn render_text(text: &str, colon_on: bool) -> Vec<String> {

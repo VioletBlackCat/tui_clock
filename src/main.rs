@@ -112,9 +112,13 @@ fn main() -> io::Result<()> {
         //match实际上是表达式，match {...}整体有值
         //Duration是标准库的表达“时长”的类型，from_millis和from_secs是Duration的关联函数，分别表示毫秒和秒
         //_ =>是通配分支符，表示匹配所有其他情况
-        let timeout = match app.screen {
-            Screen::Clock => Duration::from_millis(1000),
-            _ => Duration::from_secs(3600),
+        let timeout = if app.stopwatch.is_running() {
+            Duration::from_millis(100)          // 秒表在跑 → 高频重绘
+        } else {
+            match app.screen {
+                Screen::Clock => Duration::from_millis(1000),
+                _ => Duration::from_secs(3600),
+            }
         };
         //event::poll(timeout)返回Result<bool, Error>，表示是否有事件发生
         //等待timeout时长，用"?"运算符"返回结果，如果有事件发生，就处理事件Ok(true)；
@@ -150,3 +154,4 @@ fn main() -> io::Result<()> {
     //Ok()内部是()，表示没有意义的返回值，读作 unit（单元类型），显式表达函数成功返回，没有值
     Ok(())
 }
+
