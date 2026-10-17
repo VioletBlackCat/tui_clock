@@ -108,17 +108,18 @@ fn main() -> io::Result<()> {
         //在ui使用term_w和term_h时，app的状态不能被修改，所以传递的是不可变借用
 
         
-        //时钟页要每秒重画；菜单/设置页只在有事件时才变
+        //时钟页要每秒重画；菜单/设置页只在有事件时才变；秒表在跑时要高频重画
         //match实际上是表达式，match {...}整体有值
         //Duration是标准库的表达“时长”的类型，from_millis和from_secs是Duration的关联函数，分别表示毫秒和秒
         //_ =>是通配分支符，表示匹配所有其他情况
-        let timeout = if app.stopwatch.is_running() {
-            Duration::from_millis(100)          // 秒表在跑 → 高频重绘
-        } else {
-            match app.screen {
-                Screen::Clock => Duration::from_millis(1000),
-                _ => Duration::from_secs(3600),
-            }
+        //注意顺序：先看当前页面、再看秒表是否在跑
+        //若反过来写成 if app.stopwatch.is_running()，秒表在后台跑时会把所有页面
+        //都拖进 10Hz 全屏重绘，把之前优化掉的闪烁问题重新放大
+        //Screen::Stopwatch if ... 是带守卫的 match 分支：只有「在秒表页」且「在跑」才成立
+        let timeout = match app.screen {
+            Screen::Stopwatch if app.stopwatch.is_running() => Duration::from_millis(100),
+            Screen::Clock => Duration::from_millis(1000),
+            _ => Duration::from_secs(3600),
         };
         //event::poll(timeout)返回Result<bool, Error>，表示是否有事件发生
         //等待timeout时长，用"?"运算符"返回结果，如果有事件发生，就处理事件Ok(true)；
