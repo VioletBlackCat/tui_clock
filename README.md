@@ -111,7 +111,10 @@ app.rs（状态机）/ ui.rs（绘制）/ main.rs（生命周期）职责分离
 加入了violet紫色主题
 
 2026-10-17
-将模块拆分，ui下分别负责about,clock,menu,settings的渲染
+将模块拆分，ui下分别负责about,clock,menu,settings的渲染,
+加入tools，已经包含秒表
+
+
 
 ## License
 
