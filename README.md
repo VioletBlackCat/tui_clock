@@ -102,6 +102,12 @@ app.rs（状态机）/ ui.rs（绘制）/ main.rs（生命周期）职责分离
 加入用配置文件调整settings的功能
 完善about页面
 
+2026-10-01
+加入了violet紫色主题
+
+2026-10-17
+将模块拆分，ui下分别负责about,clock,menu,settings的渲染
+
 ## License
 
 MIT
