@@ -2,7 +2,7 @@ use std::path::PathBuf;
 use std::fs;
 use std::io;
 
-use crate::app::{HourFormat, Settings};
+use crate::settings::{HourFormat, Settings};
 use crate::theme::Theme;
 
 

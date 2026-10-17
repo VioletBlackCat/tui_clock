@@ -6,7 +6,8 @@ use crossterm::queue;
 use crossterm::style::{Print};
 use crossterm::terminal::{Clear, ClearType};
 
-use crate::app::{Settings, SETTINGS_ITEMS};
+use crate::settings::{Settings};
+use crate::app::SETTINGS_ITEMS;
 use super::{draw_message, NOT_ENOUGH_ROOM};
 
 // 设置页：两列宽度

@@ -7,7 +7,7 @@ use crossterm::queue;
 use crossterm::style::{Print, ResetColor, SetForegroundColor};
 use crossterm::terminal::{Clear, ClearType};
 
-use crate::app::Settings;
+use crate::settings::Settings;
 use super::{draw_message, emit, render_text, NOT_ENOUGH_ROOM};
 
 

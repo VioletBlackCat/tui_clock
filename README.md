@@ -58,10 +58,6 @@ theme        = "Classic"  # Classic | Sunset | Ocean
 |font.rs  | 字形数据 
 |config.rs| 配置文件的路径 / 解析 / 序列化 
 
-## License
-
-MIT
-
 ## Update record
 
 版本更新记录：
@@ -105,5 +101,10 @@ app.rs（状态机）/ ui.rs（绘制）/ main.rs（生命周期）职责分离
 2026-09-16 V1.0.0
 加入用配置文件调整settings的功能
 完善about页面
+
+## License
+
+MIT
+
 
 

@@ -3,6 +3,7 @@ mod font;
 mod ui;
 mod theme;
 mod config;
+mod settings;
 //mod 是模块声明，告诉编译器去找同名的.rs文件或同名的目录下的mod.rs文件
 //找到了就让编译器编译
 use std::io::{self, stdout};
