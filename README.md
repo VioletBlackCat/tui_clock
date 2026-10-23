@@ -61,6 +61,7 @@ theme        = "Classic"  # Classic | Sunset | Ocean | Violet
 |tools/mod.rs   | 与终端无关的计时工具：`format_hms` |
 |tools/ticker.rs| 计时核心：开始 / 暂停 / 归零与累计时长 |
 |tools/stopwatch.rs | 秒表：在 ticker 之上定义开始/暂停/归零规则 |
+|tools/timer.rs | 计时器：基于 ticker 完成倒计时判断 |
 |ui/mod.rs      | 绘制入口 `draw()` 与共享排版助手（居中、清屏、整帧发送） |
 |ui/clock.rs    | 时钟页绘制 |
 |ui/menu.rs     | 菜单页绘制 |
@@ -122,7 +123,8 @@ app.rs（状态机）/ ui.rs（绘制）/ main.rs（生命周期）职责分离
 将模块拆分，ui下分别负责about,clock,menu,settings的渲染,
 加入tools，已经包含秒表
 
-
+2026-10-23
+添加计时器
 
 ## License
 
