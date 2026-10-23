@@ -2,6 +2,7 @@
 
 pub mod stopwatch;
 pub mod ticker;
+pub mod timer;
 
 use std::time::Duration;
 

@@ -2,6 +2,8 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 use crate::settings::Settings;
 use crate::tools::stopwatch::Stopwatch;
+use crate::tools::timer::Timer;
+
 
 // —— 主菜单 ——
 pub const MAIN_MENU: [&str; 5] = ["Back", "Functions", "Settings", "About", "Quit"];
@@ -13,9 +15,10 @@ pub const MAIN_ABOUT: usize = 3;
 pub const MAIN_QUIT: usize = 4;
 
 // —— 功能子菜单（先只放已实现的） ——
-pub const FUNC_MENU: [&str; 1] = ["Stopwatch"];
+pub const FUNC_MENU: [&str; 2] = ["Stopwatch", "Timer"];
 
 pub const FUNC_STOPWATCH: usize = 0;
+pub const FUNC_TIMER: usize = 1;
 
 // —— 设置项 ——
 pub const SETTINGS_ITEMS: [&str; 3] = ["Hour format", "Seconds", "Theme"];
@@ -27,6 +30,7 @@ pub enum Screen {
     Settings { selected: usize },
     About,
     Stopwatch,
+    Timer,
 }
 
 pub struct App {
@@ -34,6 +38,7 @@ pub struct App {
     pub should_quit: bool,
     pub settings: Settings,
     pub stopwatch: Stopwatch,
+    pub timer: Timer,
 }
 
 impl App {
@@ -43,6 +48,7 @@ impl App {
             should_quit: false,
             settings,
             stopwatch: Stopwatch::new(),
+            timer: Timer::new(),
         }
     }
 
@@ -56,6 +62,11 @@ impl App {
         // 全局快捷键：任何页面都能直达功能
         if let KeyCode::Char('s') | KeyCode::Char('S') = key.code {
             self.screen = Screen::Stopwatch;
+            return;
+        }
+
+        if let KeyCode::Char('t') | KeyCode::Char('T') = key.code {
+            self.screen = Screen::Timer;
             return;
         }
 
@@ -103,6 +114,7 @@ impl App {
                 }
                 KeyCode::Enter => match *selected {
                     FUNC_STOPWATCH => next = Some(Screen::Stopwatch),
+                    FUNC_TIMER => next = Some(Screen::Timer),
                     _ => {}
                 },
                 _ => {}
@@ -113,6 +125,16 @@ impl App {
                 KeyCode::Char('r') | KeyCode::Char('R') => self.stopwatch.reset(),
                 _ => {}
             },
+
+            Screen::Timer => match key.code {
+                KeyCode::Esc => next = Some(Screen::Functions { selected: FUNC_TIMER }),
+                KeyCode::Char(' ') => self.timer.toggle(),
+                KeyCode::Char('r') | KeyCode::Char('R') => self.timer.reset(),
+                KeyCode::Left => self.timer.prev_preset(),
+                KeyCode::Right => self.timer.next_preset(),
+                _ => {}
+            },
+
                 Screen::Settings { selected } => match key.code {
                 KeyCode::Esc => next = Some(Screen::Menu { selected: MAIN_SETTINGS }),
                 KeyCode::Up => {
@@ -151,6 +173,13 @@ impl App {
             self.screen = s;
         }
     }
+
+    //时间驱动的更新：每轮循环调用一次。
+    //返回 true 表示这一轮需要提醒（目前是计时器到点）。
+    pub fn update(&mut self) -> bool {
+        self.timer.poll_finished()
+    }
+
 }
 
 #[cfg(test)]
@@ -165,5 +194,7 @@ mod tests {
         assert_eq!(MAIN_MENU[MAIN_ABOUT], "About");
         assert_eq!(MAIN_MENU[MAIN_QUIT], "Quit");
         assert_eq!(FUNC_MENU[FUNC_STOPWATCH], "Stopwatch");
+        assert_eq!(FUNC_MENU[FUNC_TIMER], "Timer");
+
     }
 }

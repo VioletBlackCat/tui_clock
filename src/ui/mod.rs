@@ -39,6 +39,8 @@ pub fn draw(app: &App, term_w: u16, term_h: u16) -> io::Result<()> {
         }
         Screen::About => about::draw_about(term_w, term_h),
         Screen::Stopwatch => tools::draw_stopwatch(term_w, term_h, &app.stopwatch, &app.settings),
+        Screen::Timer => tools::draw_timer(term_w, term_h, &app.timer, &app.settings),
+
     }
 }
 

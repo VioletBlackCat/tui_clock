@@ -102,6 +102,12 @@ fn main() -> io::Result<()> {
     //用let 将size()的返回值绑定到(term_w, term_h)上，表示终端宽度和高度
     loop {
         let (term_w, term_h) = size()?;
+
+        // 时间驱动的更新（到点响铃）
+        if app.update() {
+            print!("\x07");          // BEL：终端响铃
+        }
+        
         ui::draw(&app, term_w, term_h)?;
         //传输的是&app的不可变借用
         //ui负责绘制界面，app负责维护状态
@@ -116,10 +122,13 @@ fn main() -> io::Result<()> {
         //若反过来写成 if app.stopwatch.is_running()，秒表在后台跑时会把所有页面
         //都拖进 10Hz 全屏重绘，把之前优化掉的闪烁问题重新放大
         //Screen::Stopwatch if ... 是带守卫的 match 分支：只有「在秒表页」且「在跑」才成立
-        let timeout = match app.screen {
-            Screen::Stopwatch if app.stopwatch.is_running() => Duration::from_millis(100),
-            Screen::Clock => Duration::from_millis(1000),
-            _ => Duration::from_secs(3600),
+        let timeout = if app.stopwatch.is_running() || app.timer.is_running() {
+            Duration::from_millis(100)
+        } else {
+            match app.screen {
+                Screen::Clock => Duration::from_millis(1000),
+                _ => Duration::from_secs(3600),
+            }
         };
         //event::poll(timeout)返回Result<bool, Error>，表示是否有事件发生
         //等待timeout时长，用"?"运算符"返回结果，如果有事件发生，就处理事件Ok(true)；
