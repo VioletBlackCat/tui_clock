@@ -6,7 +6,8 @@ use crossterm::style::{Print, ResetColor, SetForegroundColor};
 use crossterm::terminal::{Clear, ClearType};
 
 use crate::settings::Settings;
-use crate::tools::{format_hms, stopwatch::Stopwatch, timer::Timer};
+use crate::tools::{format_hms, pomodoro::Pomodoro, stopwatch::Stopwatch, timer::Timer};
+
 
 use super::{draw_message, emit, render_text, NOT_ENOUGH_ROOM};
 
@@ -122,6 +123,40 @@ pub(super) fn draw_timer(
         &digits,
         &status,
         "Left/Right: preset   Space: start/pause   R: reset   Esc: back",
+        settings,
+    )
+}
+
+/// 番茄钟页
+pub(super) fn draw_pomodoro(
+    term_w: u16,
+    term_h: u16,
+    pomodoro: &Pomodoro,
+    settings: &Settings,
+) -> io::Result<()> {
+    let digits = format_hms(pomodoro.remaining());
+
+    let state = if pomodoro.is_running() {
+        "RUNNING"
+    } else if pomodoro.remaining() == pomodoro.total() {
+        "READY"
+    } else {
+        "PAUSED"
+    };
+
+    let status = format!(
+        "{}   {}   {}/4",
+        pomodoro.phase_label(),
+        state,
+        pomodoro.completed_works() % 4,
+    );
+
+    draw_tool_page(
+        term_w,
+        term_h,
+        &digits,
+        &status,
+        "Space: start/pause   R: reset   N: skip   Esc: back",
         settings,
     )
 }

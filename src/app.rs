@@ -1,6 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 use crate::settings::Settings;
+use crate::tools::pomodoro::Pomodoro;
 use crate::tools::stopwatch::Stopwatch;
 use crate::tools::timer::Timer;
 
@@ -15,10 +16,11 @@ pub const MAIN_ABOUT: usize = 3;
 pub const MAIN_QUIT: usize = 4;
 
 // —— 功能子菜单（先只放已实现的） ——
-pub const FUNC_MENU: [&str; 2] = ["Stopwatch", "Timer"];
+pub const FUNC_MENU: [&str; 3] = ["Stopwatch", "Timer", "Pomodoro"];
 
 pub const FUNC_STOPWATCH: usize = 0;
 pub const FUNC_TIMER: usize = 1;
+pub const FUNC_POMODORO: usize = 2;
 
 // —— 设置项 ——
 pub const SETTINGS_ITEMS: [&str; 3] = ["Hour format", "Seconds", "Theme"];
@@ -31,6 +33,7 @@ pub enum Screen {
     About,
     Stopwatch,
     Timer,
+    Pomodoro,
 }
 
 pub struct App {
@@ -39,6 +42,7 @@ pub struct App {
     pub settings: Settings,
     pub stopwatch: Stopwatch,
     pub timer: Timer,
+    pub pomodoro:Pomodoro,
 }
 
 impl App {
@@ -49,6 +53,7 @@ impl App {
             settings,
             stopwatch: Stopwatch::new(),
             timer: Timer::new(),
+            pomodoro: Pomodoro::new(),
         }
     }
 
@@ -67,6 +72,11 @@ impl App {
 
         if let KeyCode::Char('t') | KeyCode::Char('T') = key.code {
             self.screen = Screen::Timer;
+            return;
+        }
+
+        if let KeyCode::Char('p') | KeyCode::Char('P') = key.code {
+            self.screen = Screen::Pomodoro;
             return;
         }
 
@@ -115,6 +125,7 @@ impl App {
                 KeyCode::Enter => match *selected {
                     FUNC_STOPWATCH => next = Some(Screen::Stopwatch),
                     FUNC_TIMER => next = Some(Screen::Timer),
+                    FUNC_POMODORO => next = Some(Screen::Pomodoro),
                     _ => {}
                 },
                 _ => {}
@@ -135,7 +146,16 @@ impl App {
                 _ => {}
             },
 
-                Screen::Settings { selected } => match key.code {
+            Screen::Pomodoro => match key.code {
+                KeyCode::Esc => next = Some(Screen::Functions { selected: FUNC_POMODORO }),
+                KeyCode::Char(' ') => self.pomodoro.toggle(),
+                KeyCode::Char('r') | KeyCode::Char('R') => self.pomodoro.reset(),
+                KeyCode::Char('n') | KeyCode::Char('N') => self.pomodoro.skip(),
+                _ => {}
+            },
+
+
+            Screen::Settings { selected } => match key.code {
                 KeyCode::Esc => next = Some(Screen::Menu { selected: MAIN_SETTINGS }),
                 KeyCode::Up => {
                     *selected = if *selected == 0 {
@@ -177,7 +197,17 @@ impl App {
     //时间驱动的更新：每轮循环调用一次。
     //返回 true 表示这一轮需要提醒（目前是计时器到点）。
     pub fn update(&mut self) -> bool {
-        self.timer.poll_finished()
+        //不能写：self.timer.poll_finished() || self.pomodoro.poll_finished()
+        //`||` 是短路的 —— 左边为 true 时，右边根本不会执行。
+        let timer_done = self.timer.poll_finished();
+        let pomodoro_done = self.pomodoro.poll_finished();
+
+        timer_done || pomodoro_done
+    }
+
+    // 是否有工具正在计时（决定刷新频率）
+    pub fn is_any_running(&self) -> bool {
+        self.stopwatch.is_running() || self.timer.is_running() || self.pomodoro.is_running()
     }
 
 }
@@ -195,6 +225,7 @@ mod tests {
         assert_eq!(MAIN_MENU[MAIN_QUIT], "Quit");
         assert_eq!(FUNC_MENU[FUNC_STOPWATCH], "Stopwatch");
         assert_eq!(FUNC_MENU[FUNC_TIMER], "Timer");
+        assert_eq!(FUNC_MENU[FUNC_POMODORO], "Pomodoro");
 
     }
 }

@@ -3,6 +3,7 @@
 pub mod stopwatch;
 pub mod ticker;
 pub mod timer;
+pub mod pomodoro;
 
 use std::time::Duration;
 

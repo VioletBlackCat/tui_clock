@@ -122,7 +122,8 @@ fn main() -> io::Result<()> {
         //若反过来写成 if app.stopwatch.is_running()，秒表在后台跑时会把所有页面
         //都拖进 10Hz 全屏重绘，把之前优化掉的闪烁问题重新放大
         //Screen::Stopwatch if ... 是带守卫的 match 分支：只有「在秒表页」且「在跑」才成立
-        let timeout = if app.stopwatch.is_running() || app.timer.is_running() {
+        // 有工具在跑 → 高频重绘
+        let timeout = if app.is_any_running() {
             Duration::from_millis(100)
         } else {
             match app.screen {
@@ -130,6 +131,7 @@ fn main() -> io::Result<()> {
                 _ => Duration::from_secs(3600),
             }
         };
+
         //event::poll(timeout)返回Result<bool, Error>，表示是否有事件发生
         //等待timeout时长，用"?"运算符"返回结果，如果有事件发生，就处理事件Ok(true)；
         //如果超时，就继续循环Ok(false)，后面的event::read()就不会执行
