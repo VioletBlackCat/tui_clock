@@ -62,6 +62,7 @@ theme        = "Classic"  # Classic | Sunset | Ocean | Violet
 |tools/ticker.rs| 计时核心：开始 / 暂停 / 归零与累计时长 |
 |tools/stopwatch.rs | 秒表：在 ticker 之上定义开始/暂停/归零规则 |
 |tools/timer.rs | 计时器：基于 ticker 完成倒计时判断 |
+|tools/pompdoro.rs | 番茄钟：继续复用ticker，完成状态判断 |
 |ui/mod.rs      | 绘制入口 `draw()` 与共享排版助手（居中、清屏、整帧发送） |
 |ui/clock.rs    | 时钟页绘制 |
 |ui/menu.rs     | 菜单页绘制 |
